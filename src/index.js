@@ -1,6 +1,14 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import SimpleLightbox from 'simplelightbox';
+
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 import { fetchImages } from './fetchImages';
+import { createImagesMarkup } from './createImagesMarkup';
+
+const lightbox = new SimpleLightbox('.gallery a', {
+  captionDelay: 250,
+});
 
 const refs = {
   searchForm: document.querySelector('#search-form'),
@@ -39,6 +47,7 @@ function onSearch(e) {
       }
 
       appendImagesMarkup(data.hits);
+      lightbox.refresh();
       loadMoreShow();
       incrementPage();
     })
@@ -58,7 +67,9 @@ function onLoadMore() {
         return;
       }
       appendImagesMarkup(data.hits);
+      lightbox.refresh();
       incrementPage();
+      smoothScroll();
     })
     .catch()
     .finally(loadMoreAnabled);
@@ -74,44 +85,6 @@ function resetPage() {
 
 function appendImagesMarkup(images) {
   refs.gallery.insertAdjacentHTML('beforeend', createImagesMarkup(images));
-}
-
-function createImagesMarkup(images) {
-  return images
-    .map(
-      ({
-        webformatURL,
-        largeImageURL,
-        tags,
-        likes,
-        views,
-        comments,
-        downloads,
-      }) => `
-    <div class="photo-card">
-    <img src="${webformatURL}" alt="${tags}" loading="lazy" />
-    <div class="info">
-        <p class="info-item">
-            <b>Likes</b>
-            <span>${likes}</span>
-        </p>
-        <p class="info-item">
-            <b>Views</b>
-            <span>${views}</span>
-        </p>
-        <p class="info-item">
-            <b>Comments</b>
-            <span>${comments}</span>
-        </p>
-        <p class="info-item">
-            <b>Downloads</b>
-            <span>${downloads}</span>
-        </p>
-    </div>
-</div>
-  `
-    )
-    .join('');
 }
 
 function clearImagesMarkup() {
@@ -140,4 +113,13 @@ function searchDisasbled() {
 
 function searchAnabled() {
   refs.searchBtn.disabled = false;
+}
+
+function smoothScroll() {
+  const { height: cardHeight } =
+    refs.gallery.firstElementChild.getBoundingClientRect();
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 }
