@@ -23,15 +23,22 @@ function onSearch(e) {
   resetPage();
   clearImagesMarkup();
   fetchImages(searchQuery, page)
-    .then(images => {
-      if (images.hits.length === 0) {
+    .then(data => {
+      if (data.hits.length === 0) {
         Notify.failure(
           'Sorry, there are no images matching your search query. Please try again.'
         );
         return;
       }
 
-      appendImagesMarkup(images.hits);
+      if (data.totalHits === 0) {
+        Notify.info(
+          "We're sorry, but you've reached the end of search results."
+        );
+        return;
+      }
+
+      appendImagesMarkup(data.hits);
       loadMoreShow();
       incrementPage();
     })
@@ -42,8 +49,15 @@ function onSearch(e) {
 function onLoadMore() {
   loadMoreDisasbled();
   fetchImages(searchQuery, page)
-    .then(images => {
-      appendImagesMarkup(images.hits);
+    .then(data => {
+      if (data.totalHits === 0) {
+        Notify.info(
+          "We're sorry, but you've reached the end of search results."
+        );
+        loadMoreHide();
+        return;
+      }
+      appendImagesMarkup(data.hits);
       incrementPage();
     })
     .catch()
