@@ -6,6 +6,7 @@ const refs = {
   searchForm: document.querySelector('#search-form'),
   gallery: document.querySelector('.gallery'),
   loadMoreBtn: document.querySelector('.load-more'),
+  searchBtn: document.querySelector('#search-form button[type=submit]'),
 };
 
 let page = 1;
@@ -16,28 +17,29 @@ refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
 function onSearch(e) {
   e.preventDefault();
-  loadMoreHide();
-
+  searchDisasbled();
   searchQuery = e.currentTarget.elements.searchQuery.value;
+  loadMoreHide();
   resetPage();
-
+  clearImagesMarkup();
   fetchImages(searchQuery, page)
     .then(images => {
       if (images.hits.length === 0) {
         Notify.failure(
           'Sorry, there are no images matching your search query. Please try again.'
         );
-        clearImagesMarkup();
         return;
       }
 
       appendImagesMarkup(images.hits);
       loadMoreShow();
+      incrementPage();
     })
-    .catch();
+    .catch()
+    .finally(searchAnabled);
 }
 
-function onLoadMore(searchQuery) {
+function onLoadMore() {
   loadMoreDisasbled();
   fetchImages(searchQuery, page)
     .then(images => {
@@ -45,7 +47,7 @@ function onLoadMore(searchQuery) {
       incrementPage();
     })
     .catch()
-    .finally(() => loadMoreAnabled());
+    .finally(loadMoreAnabled);
 }
 
 function incrementPage() {
@@ -116,5 +118,13 @@ function loadMoreDisasbled() {
 }
 
 function loadMoreAnabled() {
-  refs.loadMoreBtn.disabled = true;
+  refs.loadMoreBtn.disabled = false;
+}
+
+function searchDisasbled() {
+  refs.searchBtn.disabled = true;
+}
+
+function searchAnabled() {
+  refs.searchBtn.disabled = false;
 }
