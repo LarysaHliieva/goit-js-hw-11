@@ -1,7 +1,27 @@
 .load-more {
+  display: block;
+  margin: 0 auto;
+  padding: 10px 30px;
+
+  border: none;
+  border-radius: 4px;
+  color: white;
+  background-color: rgb(110, 110, 212);
+
+  cursor: pointer;
+
+  &:hover,
+  &:active {
+    background-color: rgb(50, 50, 169);
+  }
+
   &.is-hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
+    // opacity: 0;
+    // visibility: hidden;
+    // pointer-events: none;
+  }
+
+  &:disabled {
+    opacity: 30%;
   }
 }
