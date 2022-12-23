@@ -50,31 +50,6 @@ async function onSearch(e) {
       console.log(error);
     };
   }
-
-  //-------------- БЕЗ async/await--------------
-  // fetchImages(searchQuery, page)
-  //   .then(data => {
-  //     if (data.hits.length === 0) {
-  //       Notify.failure(
-  //         'Sorry, there are no images matching your search query. Please try again.'
-  //       );
-  //       return;
-  //     }
-
-  //     if (data.totalHits === 0) {
-  //       Notify.info(
-  //         "We're sorry, but you've reached the end of search results."
-  //       );
-  //       return;
-  //     }
-
-  //     appendImagesMarkup(data.hits);
-  //     lightbox.refresh();
-  //     loadMoreShow();
-  //     incrementPage();
-  //   })
-  //   .catch()
-  //   .finally(searchAnabled);
 }
 
 async function onLoadMore() {
@@ -93,27 +68,6 @@ async function onLoadMore() {
     };
   }
 }
-
-//-------------- БЕЗ async/await--------------
-// function onLoadMore() {
-//   loadMoreDisasbled();
-//   fetchImages(searchQuery, page)
-//     .then(data => {
-//       if (data.totalHits === 0) {
-//         Notify.info(
-//           "We're sorry, but you've reached the end of search results."
-//         );
-//         loadMoreHide();
-//         return;
-//       }
-//       appendImagesMarkup(data.hits);
-//       lightbox.refresh();
-//       incrementPage();
-//       smoothScroll();
-//     })
-//     .catch()
-//     .finally(loadMoreAnabled);
-// }
 
 function showGallery(data) {
   appendImagesMarkup(data.hits);
@@ -137,6 +91,14 @@ function incrementPage() {
 
 function resetPage() {
   page = 1;
+}
+
+function incrementCounterImages(quantity) {
+  counterImages += quantity;
+}
+
+function resetCounterImages() {
+  counterImages = 0;
 }
 
 function appendImagesMarkup(images) {
@@ -178,12 +140,4 @@ function smoothScroll() {
     top: cardHeight * 2,
     behavior: 'smooth',
   });
-}
-
-function incrementCounterImages(quantity) {
-  counterImages += quantity;
-}
-
-function resetCounterImages() {
-  counterImages = 0;
 }
