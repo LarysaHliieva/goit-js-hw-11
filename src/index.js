@@ -19,6 +19,7 @@ const refs = {
 
 let page = 1;
 let searchQuery = '';
+let counterImages = 0;
 
 refs.searchForm.addEventListener('submit', onSearch);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
@@ -29,6 +30,7 @@ async function onSearch(e) {
   searchQuery = e.currentTarget.elements.searchQuery.value;
   loadMoreHide();
   resetPage();
+  resetCounterImages();
   clearImagesMarkup();
 
   try {
@@ -42,15 +44,7 @@ async function onSearch(e) {
       return;
     }
 
-    if (data.totalHits === 0) {
-      Notify.info("We're sorry, but you've reached the end of search results.");
-      return;
-    }
-
-    appendImagesMarkup(data.hits);
-    lightbox.refresh();
-    loadMoreShow();
-    incrementPage();
+    showGallery(data);
   } catch (error) {
     error => {
       console.log(error);
@@ -90,15 +84,8 @@ async function onLoadMore() {
     const data = await fetchImages(searchQuery, page);
     loadMoreAnabled();
 
-    if (data.totalHits === 0) {
-      Notify.info("We're sorry, but you've reached the end of search results.");
-      loadMoreHide();
-      return;
-    }
+    showGallery(data);
 
-    appendImagesMarkup(data.hits);
-    lightbox.refresh();
-    incrementPage();
     smoothScroll();
   } catch (error) {
     error => {
@@ -106,6 +93,7 @@ async function onLoadMore() {
     };
   }
 }
+
 //-------------- БЕЗ async/await--------------
 // function onLoadMore() {
 //   loadMoreDisasbled();
@@ -126,6 +114,22 @@ async function onLoadMore() {
 //     .catch()
 //     .finally(loadMoreAnabled);
 // }
+
+function showGallery(data) {
+  appendImagesMarkup(data.hits);
+  lightbox.refresh();
+  incrementPage();
+
+  incrementCounterImages(data.hits.length);
+
+  if (data.totalHits === counterImages) {
+    Notify.info("We're sorry, but you've reached the end of search results.");
+    loadMoreHide();
+    return;
+  }
+
+  loadMoreShow();
+}
 
 function incrementPage() {
   page += 1;
@@ -174,4 +178,12 @@ function smoothScroll() {
     top: cardHeight * 2,
     behavior: 'smooth',
   });
+}
+
+function incrementCounterImages(quantity) {
+  counterImages += quantity;
+}
+
+function resetCounterImages() {
+  counterImages = 0;
 }
