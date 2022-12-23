@@ -59,7 +59,6 @@ function resetPage() {
 }
 
 function appendImagesMarkup(images) {
-  // refs.gallery.innerHTML = createImagesMarkup(images);
   refs.gallery.insertAdjacentHTML('beforeend', createImagesMarkup(images));
 }
 
